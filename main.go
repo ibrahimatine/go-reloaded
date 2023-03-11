@@ -61,6 +61,8 @@ func main() {
 						chaine[i] = strings.TrimSuffix(mot, "(bin)")
 						chaine[i-1] = dci
 						nchaine = strings.Join(chaine, " ")
+						
+
 					}
 				}
 
