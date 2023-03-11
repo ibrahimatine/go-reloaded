@@ -64,16 +64,29 @@ func main() {
 					}
 				}
 
-				if strings.HasSuffix(mot, "(up)") || strings.HasSuffix(mot, "(up),") {
+				if strings.HasSuffix(mot, "(up)") { //|| strings.HasSuffix(mot, "(up),")
 					up := strings.ToUpper(chaine[i-1])
 					chaine[i] = strings.TrimSuffix(mot, "(up)")
-					if strings.HasSuffix(mot, "(up),") {
+					/*if strings.HasSuffix(mot, "(up),") {
 						chaine[i] = strings.TrimSuffix(mot, "(up)")
-					}
-
+					}*/
 					chaine[i-1] = up
 					nchaine = strings.Join(chaine, " ")
 
+				}
+
+				if strings.HasSuffix(mot, "(low)") {
+					low := strings.ToLower(chaine[i-1])
+					chaine[i] = strings.TrimSuffix(mot, "(low)")
+					chaine[i-1] = low
+					nchaine = strings.Join(chaine, " ")
+				}
+
+				if strings.HasSuffix(mot, "(cap)") {
+					cap := strings.Title(chaine[i-1])
+					chaine[i] = strings.TrimSuffix(mot, "(cap)")
+					chaine[i-1] = cap
+					nchaine = strings.Join(chaine, " ")
 				}
 
 			}
