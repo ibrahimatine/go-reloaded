@@ -24,69 +24,51 @@ func main() {
 
 		data, err := os.ReadFile("sample.txt")
 		if err == nil {
-			chaine := strings.Split(string(data), " ")
-			nchaine := string(data)
+			re := regexp.MustCompile(`\s+`)
+			nchaine := re.ReplaceAllString(string(data), " ")
+
+			chaine := strings.Split(nchaine, " ")
+			//nchaine = string(data)
 
 			for i, mot := range chaine {
 
-				if strings.HasSuffix(mot, "(hex)") {
+				if chaine[i] == "(hex)" && i != 0 {
 
 					dc, err := strconv.ParseInt(chaine[i-1], 16, 64)
 					if err == nil {
 						dci := strconv.FormatInt(dc, 10)
-						chaine[i] = strings.TrimSuffix(mot, "(hex)")
-						chaine[i-1] = dci //strings.ReplaceAll(nchaine, chaine[i-1], dci)
+						chaine[i-1] = dci 
 
 						nchaine = strings.Join(chaine, " ")
 					}
-				} else if strings.HasSuffix(mot, "(bin)") {
+				} else if chaine[i] == "(bin)" && i != 0 {
 					dc, err := strconv.ParseInt(chaine[i-1], 2, 64)
 					if err == nil {
 						dci := strconv.FormatInt(dc, 10)
-						chaine[i] = strings.TrimSuffix(mot, "(bin)")
 						chaine[i-1] = dci
-
 						nchaine = strings.Join(chaine, " ")
-
 					}
 				}
 
-				if strings.HasSuffix(mot, "(up)") { //|| strings.HasSuffix(mot, "(up),")
+				if chaine[i] == "(up)" {
 					up := strings.ToUpper(chaine[i-1])
-					chaine[i] = strings.TrimSuffix(mot, "(up)")
 					chaine[i-1] = up
 					nchaine = strings.Join(chaine, " ")
-
 				}
 
-				if strings.HasSuffix(mot, "(low)") {
+				if chaine[i] == "(low)" && i != 0 {
 					low := strings.ToLower(chaine[i-1])
-					chaine[i] = strings.TrimSuffix(mot, "(low)")
 					chaine[i-1] = low
 					nchaine = strings.Join(chaine, " ")
 				}
 
-				if strings.HasSuffix(mot, "(cap)") {
+				if chaine[i] == "(cap)" && i != 0 {
 					cap := strings.Title(chaine[i-1])
-					chaine[i] = strings.TrimSuffix(mot, "(cap)")
 					chaine[i-1] = cap
 					nchaine = strings.Join(chaine, " ")
 				}
 
-				/*if mot == "(cap," {
-					re := regexp.MustCompile("[0-9]+")
-					indice := re.FindAllString(string(chaine[i+1]), -1)
-					num := strings.Join(indice, "")
-					conv, _ := strconv.Atoi(num)
-					for j := 1; j <= conv; j++ {
-						chaine[i-j] = strings.Title(chaine[i-j])
-					}
-					chaine[i] = ""
-					chaine[i+1] = ""
-					nchaine = strings.Join(chaine, " ")
-
-				}*/
-				if mot == "(cap," {
+				if mot == "(cap," && i != 0 {
 					// Extraire le nombre à partir de la chaîne suivante
 					nbr := strings.TrimFunc(chaine[i+1], func(r rune) bool {
 						return !unicode.IsDigit(r)
@@ -100,14 +82,13 @@ func main() {
 						}
 					}
 					// Supprimer les mots actuel et suivant
-					//chaine = append(chaine[:i], chaine[i+2:]...)
+
 					chaine[i] = ""
 					chaine[i+1] = ""
-
 					nchaine = strings.Join(chaine, " ")
 				}
 
-				if mot == "(up," {
+				if mot == "(up," && i != 0 {
 					nbr := strings.TrimFunc(chaine[i+1], func(r rune) bool {
 						return !unicode.IsDigit(r)
 					})
@@ -123,7 +104,7 @@ func main() {
 					nchaine = strings.Join(chaine, " ")
 				}
 
-				if mot == "(low," {
+				if mot == "(low," && i != 0 {
 					nbr := strings.TrimFunc(chaine[i+1], func(r rune) bool {
 						return !unicode.IsDigit(r)
 					})
@@ -138,6 +119,13 @@ func main() {
 
 					nchaine = strings.Join(chaine, " ")
 				}
+
+				//Suppression
+				nchaine = strings.ReplaceAll(nchaine, "(bin)", "")
+				nchaine = strings.ReplaceAll(nchaine, "(hex)", "")
+				nchaine = strings.ReplaceAll(nchaine, "(up)", "")
+				nchaine = strings.ReplaceAll(nchaine, "(low)", "")
+				nchaine = strings.ReplaceAll(nchaine, "(cap)", "")
 
 			}
 			fmt.Println(esp(nchaine))
