@@ -37,7 +37,7 @@ func main() {
 					dc, err := strconv.ParseInt(chaine[i-1], 16, 64)
 					if err == nil {
 						dci := strconv.FormatInt(dc, 10)
-						chaine[i-1] = dci 
+						chaine[i-1] = dci
 
 						nchaine = strings.Join(chaine, " ")
 					}
