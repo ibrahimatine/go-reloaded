@@ -19,27 +19,39 @@ func esp(s string) string {
 
 // fonction pour les apostrophes
 
+
 func guil(s string) string {
 
-	mots := strings.Fields(s)
+		mots := strings.Fields(s)
 
-	var nchaine string
-	var cpt int
-	for _, mot := range mots {
-		if strings.HasPrefix(mot, "'") {
-			nchaine = nchaine + mot
-			cpt ++
-		} else if strings.HasSuffix(mot, "'") {
-			nchaine += mot
-			cpt--
-		} else if cpt > 0 {
-			nchaine += mot
-		} else {
-			nchaine += " " + mot
+		var nchaine string
+		var cpt int
+		for _, mot := range mots {
+			if strings.HasPrefix(mot, "'") {
+				nchaine = nchaine + mot+ " "
+				cpt++
+			} else if strings.HasSuffix(mot, "'") {
+				nchaine += mot+" "
+				cpt--
+			} else if cpt > 0 {
+				nchaine += mot + " "
+			} else {
+				nchaine += mot+" "
+			}
+
 		}
-
+		return nchaine
 	}
-	return  (nchaine)//nchaine
+
+
+// ******************** gerer la ponctuation*********************
+func coP(chaine string) string {
+	ponctuation := []string{".", ":", ",", ";", "?", "!"}
+	for _, ponc := range ponctuation {
+		chaine = strings.ReplaceAll(chaine, " "+ponc, ponc+" ")
+		chaine = strings.ReplaceAll(chaine, " "+ponc, ponc)
+	}
+	return chaine
 }
 
 func main() {
@@ -153,7 +165,7 @@ func main() {
 				nchaine = strings.ReplaceAll(nchaine, "(cap)", "")
 
 			}
-			fmt.Println(guil(esp(nchaine)))
+			fmt.Println (guil(nchaine)) //(esp(coP(esp(nchaine))))
 		}
 
 	}
