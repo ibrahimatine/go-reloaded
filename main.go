@@ -10,17 +10,13 @@ import (
 )
 
 func esp(s string) string {
-
 	re := regexp.MustCompile(`\s+`)
 	s = re.ReplaceAllString(s, " ")
-
 	return s
 }
 
 // fonction pour les apostrophes
-
 func guil(s string) string {
-
 	mots := strings.Fields(s)
 	var nchaine string
 	var cpt int
@@ -38,14 +34,13 @@ func guil(s string) string {
 		} else {
 			nchaine += mot + " "
 		}
-
 	}
 	return nchaine
 }
 
 // ******************** gerer la ponctuation*********************
 func coP(chaine string) string {
-	ponctuation := []string{".", ":", ",", ";", "?", "!", "'"}
+	ponctuation := []string{".", ":", ",", ";", "?", "!"}
 	for _, ponc := range ponctuation {
 		chaine = strings.ReplaceAll(chaine, " "+ponc, ponc+" ")
 		chaine = strings.ReplaceAll(chaine, " "+ponc, ponc)
@@ -53,44 +48,37 @@ func coP(chaine string) string {
 	return chaine
 }
 
-/*func replaceAWithAn(s string) string {
-    words := strings.Fields(s)
-    for i := 0; i < len(words)-1; i++ {
-        if (words[i] == "a" || words[i] == "A") && (isVowel(words[i+1][0]) || strings.HasPrefix(words[i+1], "h")) {
-            words[i] = "an"
-        }
-    }
-    return strings.Join(words, " ")
+func Aan(s string) string {
+	words := strings.Fields(s)
+	for i := 0; i < len(words)-1; i++ {
+		if (words[i] == "a") && (isVowel(words[i+1][0])) {
+			words[i] = "an"
+		} else if (words[i] == "A") && (isVowel(words[i+1][0])) {
+			words[i] = "An"
+		}
+	}
+	return strings.Join(words, " ")
 }
-
 func isVowel(c byte) bool {
-    vowels := "aeiouAEIOU"
-    return strings.ContainsRune(vowels, rune(c))
+	vowels := "aeiouhAEIOUH"
+	return strings.ContainsRune(vowels, rune(c))
 }
-*/
 
 func main() {
-
 	//arguments := os.Args[1:]
 	//if len(arguments) == 2 {
-
 	data, err := os.ReadFile("sample.txt")
 	if err == nil {
 		re := regexp.MustCompile(`\s+`)
 		nchaine := re.ReplaceAllString(string(data), " ")
-
 		chaine := strings.Split(nchaine, " ")
 		//nchaine = string(data)
-
 		for i, mot := range chaine {
-
 			if chaine[i] == "(hex)" && i != 0 {
-
 				dc, err := strconv.ParseInt(chaine[i-1], 16, 64)
 				if err == nil {
 					dci := strconv.FormatInt(dc, 10)
 					chaine[i-1] = dci
-
 					nchaine = strings.Join(chaine, " ")
 				}
 			} else if chaine[i] == "(bin)" && i != 0 {
@@ -101,19 +89,16 @@ func main() {
 					nchaine = strings.Join(chaine, " ")
 				}
 			}
-
 			if chaine[i] == "(up)" {
 				up := strings.ToUpper(chaine[i-1])
 				chaine[i-1] = up
 				nchaine = strings.Join(chaine, " ")
 			}
-
 			if chaine[i] == "(low)" && i != 0 {
 				low := strings.ToLower(chaine[i-1])
 				chaine[i-1] = low
 				nchaine = strings.Join(chaine, " ")
 			}
-
 			if chaine[i] == "(cap)" && i != 0 {
 				cap := strings.Title(chaine[i-1])
 				chaine[i-1] = cap
@@ -127,62 +112,74 @@ func main() {
 				})
 				conv, err := strconv.Atoi(nbr)
 				if err == nil {
+					if conv <= i {
+						// Capitaliser les mots précédents
+						for j := i - conv; j <= i; j++ {
+							chaine[i-j] = strings.Title(chaine[i-j])
+						}
 
-					// Capitaliser les mots précédents
-					for j := 1; j <= conv; j++ {
-						chaine[i-j] = strings.Title(chaine[i-j])
+					} else {
+						for j := 0; j <= i; j++ {
+							chaine[i-j] = strings.Title(chaine[i-j])
+						}
+
 					}
+
 				}
 				// Supprimer les mots actuel et suivant
-
 				chaine[i] = ""
 				chaine[i+1] = ""
 				nchaine = strings.Join(chaine, " ")
 			}
-
 			if mot == "(up," && i != 0 {
 				nbr := strings.TrimFunc(chaine[i+1], func(r rune) bool {
 					return !unicode.IsDigit(r)
 				})
 				conv, err := strconv.Atoi(nbr)
 				if err == nil {
-					for j := 1; j <= conv; j++ {
-						chaine[i-j] = strings.ToUpper(chaine[i-j])
+					if conv <= i {
+						for j := i - conv; j <= i; j++ {
+							chaine[i-j] = strings.ToUpper(chaine[i-j])
+						}
+					} else {
+						for j := 0; j <= i; j++ {
+							chaine[i-j] = strings.ToUpper(chaine[i-j])
+						}
 					}
 				}
 				chaine[i] = ""
 				chaine[i+1] = ""
-
 				nchaine = strings.Join(chaine, " ")
 			}
-
 			if mot == "(low," && i != 0 {
 				nbr := strings.TrimFunc(chaine[i+1], func(r rune) bool {
 					return !unicode.IsDigit(r)
 				})
 				conv, err := strconv.Atoi(nbr)
 				if err == nil {
-					for j := 1; j <= conv; j++ {
-						chaine[i-j] = strings.ToLower(chaine[i-j])
+					if i <= conv {
+						for j := i - conv; j <= i; j++ {
+							chaine[i-j] = strings.ToLower(chaine[i-j])
+						}
+					} else {
+						for j := 0; j <= i; j++ {
+							chaine[i-j] = strings.ToLower(chaine[i-j])
+						}
 					}
 				}
 				chaine[i] = ""
 				chaine[i+1] = ""
-
 				nchaine = strings.Join(chaine, " ")
 			}
-
 			//Suppression
 			nchaine = strings.ReplaceAll(nchaine, "(bin)", "")
 			nchaine = strings.ReplaceAll(nchaine, "(hex)", "")
 			nchaine = strings.ReplaceAll(nchaine, "(up)", "")
 			nchaine = strings.ReplaceAll(nchaine, "(low)", "")
 			nchaine = strings.ReplaceAll(nchaine, "(cap)", "")
-
 		}
-		fmt.Println(esp(coP(esp(nchaine))))
-	} //(coP(guil(nchaine))) //
-
+		fmt.Println(Aan(esp(coP(esp(nchaine)))))
+	}
 }
 
 //}
