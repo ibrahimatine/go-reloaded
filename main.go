@@ -16,27 +16,29 @@ func esp(s string) string {
 }
 
 // fonction pour les apostrophes
-func guil(s string) string {
+/*func guil(s string) string {
+	// Trouver tous les apostrophes dans la phrase
 	mots := strings.Fields(s)
-	var nchaine string
-	var cpt int
-	for _, mot := range mots {
-		if strings.HasPrefix(mot, "'") {
-			nchaine += mot
+	cpt := 0
+	for _, c := range mots {
+		if c == "'" {
 			cpt++
-			//
-		} else if strings.HasSuffix(mot, "'") {
-			nchaine += mot
-			cpt++
-		} else if cpt > 0 {
-			nchaine += mot + " "
-			cpt--
-		} else {
-			nchaine += mot + " "
 		}
 	}
+
+	// Vérifier que le nombre d'apostrophes est pair
+	if cpt%2 == 0 {
+		// Modifier la phrase avec les apostrophes correctement placés
+		nchaine := s
+		for i := 0; i < cpt; i += 2 {
+			deb := mots[i] + 1
+			fin := mots[i+1]
+			nchaine = nchaine[:deb] + strings.TrimSpace(nchaine[deb:fin]) + nchaine[fin:]
+		}
+	}
+
 	return nchaine
-}
+}*/
 
 // ******************** gerer la ponctuation*********************
 func coP(chaine string) string {
@@ -44,6 +46,7 @@ func coP(chaine string) string {
 	for _, ponc := range ponctuation {
 		chaine = strings.ReplaceAll(chaine, " "+ponc, ponc+" ")
 		chaine = strings.ReplaceAll(chaine, " "+ponc, ponc)
+		//chaine = strings.ReplaceAll(chaine, ponc+" ", ponc)
 	}
 	return chaine
 }
@@ -100,8 +103,16 @@ func main() {
 				nchaine = strings.Join(chaine, " ")
 			}
 			if chaine[i] == "(cap)" && i != 0 {
-				cap := strings.Title(chaine[i-1])
-				chaine[i-1] = cap
+
+				cap := []rune(chaine[i-1])
+				cap[0] = unicode.ToUpper(cap[0])
+				for i := range cap {
+					if i != 0 {
+						cap[i] = unicode.ToLower(cap[i])
+					}
+				}
+				caps := string(cap)
+				chaine[i-1] = caps
 				nchaine = strings.Join(chaine, " ")
 			}
 
@@ -114,13 +125,29 @@ func main() {
 				if err == nil {
 					if conv <= i {
 						// Capitaliser les mots précédents
-						for j := i - conv; j <= i; j++ {
-							chaine[i-j] = strings.Title(chaine[i-j])
+						for j := i - conv; j < i; j++ {
+							cap := []rune(chaine[j])
+							cap[0] = unicode.ToUpper(cap[0])
+							for i := range cap {
+								if (i) != 0 {
+									cap[j] = unicode.ToLower(cap[j])
+								}
+							}
+							caps := string(cap)
+							chaine[j] = caps
 						}
 
 					} else {
-						for j := 0; j <= i; j++ {
-							chaine[i-j] = strings.Title(chaine[i-j])
+						for j := 1; j < i; j++ {
+							cap := []rune(chaine[j])
+							cap[0] = unicode.ToUpper(cap[0])
+							for i := range cap {
+								if (i) != 0 {
+									cap[j] = unicode.ToLower(cap[j])
+								}
+							}
+							caps := string(cap)
+							chaine[j] = caps
 						}
 
 					}
@@ -138,7 +165,7 @@ func main() {
 				conv, err := strconv.Atoi(nbr)
 				if err == nil {
 					if conv <= i {
-						for j := i - conv; j <= i; j++ {
+						for j := i - conv; j < i; j++ {
 							chaine[i-j] = strings.ToUpper(chaine[i-j])
 						}
 					} else {
@@ -171,6 +198,7 @@ func main() {
 				chaine[i+1] = ""
 				nchaine = strings.Join(chaine, " ")
 			}
+
 			//Suppression
 			nchaine = strings.ReplaceAll(nchaine, "(bin)", "")
 			nchaine = strings.ReplaceAll(nchaine, "(hex)", "")
@@ -178,7 +206,7 @@ func main() {
 			nchaine = strings.ReplaceAll(nchaine, "(low)", "")
 			nchaine = strings.ReplaceAll(nchaine, "(cap)", "")
 		}
-		fmt.Println(Aan(esp(coP(esp(nchaine)))))
+		fmt.Println(Aan(nchaine)) //(Aan(esp(coP(esp(nchaine)))))
 	}
 }
 
