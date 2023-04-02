@@ -9,12 +9,12 @@ import (
 	"unicode"
 )
 
-func esp(s string) string {
+/*func esp(s string) string {
 	re := regexp.MustCompile(`\s+`)
 	s = re.ReplaceAllString(s, " ")
 	s = strings.Trim(s, " ")
 	return s
-}
+}*/
 
 // ******************** gerer la ponctuation*********************
 /*func coP(chaine string) string {
@@ -141,12 +141,12 @@ func main() {
 					conv, err := strconv.Atoi(nbr)
 					if err == nil {
 						if conv <= i {
-							for j := i - conv; j <= i; j++ {
-								chaine[i-j] = strings.ToUpper(chaine[i-j])
+							for j := i - conv; j <= i-1; j++ {
+								chaine[j] = strings.ToUpper(chaine[j])
 							}
 						} else {
-							for j := 0; j <= i; j++ {
-								chaine[i-j] = strings.ToUpper(chaine[i-j])
+							for j := 1; j < i; j++ {
+								chaine[j] = strings.ToUpper(chaine[j])
 							}
 						}
 					}
@@ -161,12 +161,12 @@ func main() {
 					conv, err := strconv.Atoi(nbr)
 					if err == nil {
 						if i <= conv {
-							for j := i - conv; j <= i; j++ {
-								chaine[i-j] = strings.ToLower(chaine[i-j])
+							for j := i - conv; j <= i-1; j++ {
+								chaine[j] = strings.ToLower(chaine[j])
 							}
 						} else {
-							for j := 0; j <= i; j++ {
-								chaine[i-j] = strings.ToLower(chaine[i-j])
+							for j := 1; j < i; j++ {
+								chaine[j] = strings.ToLower(chaine[j])
 							}
 						}
 					}
@@ -192,12 +192,24 @@ func main() {
 						apos = 0
 					}
 				}
+
+				// ******************** gerer la ponctuation*********************
+
 				ponctuation := []string{".", ":", ",", ";", "?", "!"}
 				for _, ponc := range ponctuation {
 					nchaine = strings.ReplaceAll(nchaine, " "+ponc, ponc+" ")
 					nchaine = strings.ReplaceAll(nchaine, " "+ponc, ponc)
 
 				}
+
+				// ******************** supprimer le surplus d'espace entre les mots ******************************
+				re := regexp.MustCompile(`\s+`)
+				nchaine = re.ReplaceAllString(nchaine, " ")
+				nchaine = strings.Trim(nchaine, " ")
+
+				ap := regexp.MustCompile(`\.\s+'`)
+				nchaine = ap.ReplaceAllString(nchaine, `.'`)
+
 				//Suppression
 				nchaine = strings.ReplaceAll(nchaine, "(bin)", "")
 				nchaine = strings.ReplaceAll(nchaine, "(hex)", "")
@@ -205,9 +217,9 @@ func main() {
 				nchaine = strings.ReplaceAll(nchaine, "(low)", "")
 				nchaine = strings.ReplaceAll(nchaine, "(cap)", "")
 			}
-			SORTIE := os.WriteFile(os.Args[2], []byte(nchaine), 0400)
+			SORTIE := os.WriteFile(os.Args[2], []byte(Aan(nchaine)), 0777)
 			if SORTIE != nil {
-				fmt.Println(Aan((esp(nchaine))))
+				fmt.Println(nchaine)
 
 			}
 		}
