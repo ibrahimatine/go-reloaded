@@ -145,7 +145,7 @@ func main() {
 								chaine[j] = strings.ToUpper(chaine[j])
 							}
 						} else {
-							for j := 1; j < i; j++ {
+							for j := 0; j < i; j++ {
 								chaine[j] = strings.ToUpper(chaine[j])
 							}
 						}
@@ -165,7 +165,7 @@ func main() {
 								chaine[j] = strings.ToLower(chaine[j])
 							}
 						} else {
-							for j := 1; j < i; j++ {
+							for j := 0; j < i; j++ {
 								chaine[j] = strings.ToLower(chaine[j])
 							}
 						}
