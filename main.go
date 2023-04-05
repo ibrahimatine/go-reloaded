@@ -160,7 +160,7 @@ func main() {
 					})
 					conv, err := strconv.Atoi(nbr)
 					if err == nil {
-						if i <= conv {
+						if conv <= i {
 							for j := i - conv; j <= i-1; j++ {
 								chaine[j] = strings.ToLower(chaine[j])
 							}
