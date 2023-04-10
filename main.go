@@ -10,6 +10,28 @@ import (
 	"unicode"
 )
 
+func punct(line string) string {
+
+	re := regexp.MustCompile(`(\S+)\s*([.,!?;:])\s*`)
+	return re.ReplaceAllString(line, "$1$2 ")
+}
+
+func Apost(line string) string {
+
+	re := regexp.MustCompile(`'\s*([^']+?)\s*'`)
+	return re.ReplaceAllString(line, "'$1'")
+}
+
+func ponc(s string) string {
+
+	ponctuation := []string{".", ":", ",", ";", "?", "!"}
+	for _, ponc := range ponctuation {
+		s = strings.ReplaceAll(s, " "+ponc, ponc+" ")
+		s = strings.ReplaceAll(s, " "+ponc, ponc)
+	}
+	return s
+}
+
 func Aan(s string) string {
 	words := strings.Fields(s)
 	for i := 0; i < len(words)-1; i++ {
@@ -37,9 +59,9 @@ func main() {
 		if err == nil {
 			re := regexp.MustCompile(`\s+`)
 			nchaine := re.ReplaceAllString(string(data), " ")
-			chaine := strings.Split(nchaine, " ")
-			//nchaine = string(data)
-			//numberStringCap := ""
+			nchaine = punct(nchaine)
+			chaine := strings.Fields(nchaine)
+
 			for i, mot := range chaine {
 
 				if chaine[i] == "(hex)" && i != 0 {
@@ -47,8 +69,13 @@ func main() {
 					if err == nil {
 						dci := strconv.FormatInt(dc, 10)
 						chaine[i-1] = dci
-						nchaine = strings.Join(chaine, " ")
+						for j := i; j >= 1; j-- {
+							vide := ""
+							chaine[j] = chaine[j-1]
+							chaine[j-1] = vide
+						}
 					}
+
 				}
 
 				if chaine[i] == "(bin)" && i != 0 {
@@ -56,35 +83,48 @@ func main() {
 					if err == nil {
 						dci := strconv.FormatInt(dc, 10)
 						chaine[i-1] = dci
-						nchaine = strings.Join(chaine, " ")
+						for j := i; j >= 1; j-- {
+							vide := ""
+							chaine[j] = chaine[j-1]
+							chaine[j-1] = vide
+						}
+					}
+
+				}
+				if mot == "(up)" && i != 0 {
+					chaine[i-1] = strings.ToUpper(chaine[i-1])
+					for j := i; j >= 1; j-- {
+						vide := ""
+						chaine[j] = chaine[j-1]
+						chaine[j-1] = vide
+
 					}
 				}
-				if chaine[i] == "(up)" && i != 0 {
-					up := strings.ToUpper(chaine[i-1])
-					chaine[i-1] = up
-					nchaine = strings.Join(chaine, " ")
-				}
-				if chaine[i] == "(up)" && i == 0 {
+				if mot == "(up)" && i == 0 {
 					chaine[i] = strings.Trim(chaine[i], chaine[i])
 				}
 
 				if chaine[i] == "(low)" && i != 0 {
-					low := strings.ToLower(chaine[i-1])
-					chaine[i-1] = low
-					nchaine = strings.Join(chaine, " ")
-				}
-				if chaine[i] == "(low)" && i == 0 {
+					chaine[i-1] = strings.ToLower(chaine[i-1])
+					for j := i; j >= 1; j-- {
+						vide := ""
+						chaine[j] = chaine[j-1]
+						chaine[j-1] = vide
+					}
+				} else if chaine[i] == "(low)" && i == 0 {
 					chaine[i] = strings.Trim(chaine[i], chaine[i])
 				}
 
 				if chaine[i] == "(cap)" && i != 0 {
 					up := strings.ToLower(chaine[i-1])
-					chaine[i-1] = up
 					chaine[i-1] = strings.Title(up)
-					nchaine = strings.Join(chaine, " ")
+					for j := i; j >= 1; j-- {
+						vide := ""
+						chaine[j] = chaine[j-1]
+						chaine[j-1] = vide
 
-				}
-				if chaine[i] == "(cap)" && i == 0 {
+					}
+				} else if chaine[i] == "(cap)" && i == 0 {
 					chaine[i] = strings.Trim(chaine[i], chaine[i])
 				}
 
@@ -108,10 +148,13 @@ func main() {
 						if i == 1 {
 							chaine[i] = strings.Trim(chaine[i], chaine[i])
 						}
+						for j := i + 1; j >= 2; j-- {
+							chaine[j] = chaine[j-2]
+							chaine[j-2] = ""
+						}
 
 					}
-					chaine[i] = ""
-					chaine[i+1] = ""
+
 					nchaine = strings.Join(chaine, " ")
 				}
 
@@ -130,9 +173,15 @@ func main() {
 								chaine[j] = strings.ToUpper(chaine[j])
 							}
 						}
+						for j := i + 1; j >= 2; j-- {
+							chaine[j] = chaine[j-2]
+							chaine[j-2] = ""
+						}
+						if i == 1 {
+							chaine[i] = strings.Trim(chaine[i], chaine[i])
+						}
 					}
-					chaine[i] = ""
-					chaine[i+1] = ""
+
 					nchaine = strings.Join(chaine, " ")
 				}
 				if mot == "(low," && i != 0 {
@@ -150,22 +199,16 @@ func main() {
 								chaine[j] = strings.ToLower(chaine[j])
 							}
 						}
+						for j := i + 1; j >= 2; j-- {
+							chaine[j] = chaine[j-2]
+							chaine[j-2] = ""
+						}
+						if i == 1 {
+							chaine[i] = strings.Trim(chaine[i], chaine[i])
+						}
 					}
-					chaine[i] = ""
-					chaine[i+1] = ""
+
 					nchaine = strings.Join(chaine, " ")
-				}
-
-				it := regexp.MustCompile(`'\s*([^']+?)\s*'`)
-				nchaine = it.ReplaceAllString(nchaine, "'$1'")
-
-				// ******************** gerer la ponctuation*********************
-
-				ponctuation := []string{".", ":", ",", ";", "?", "!"}
-				for _, ponc := range ponctuation {
-					nchaine = strings.ReplaceAll(nchaine, " "+ponc, ponc+" ")
-					nchaine = strings.ReplaceAll(nchaine, " "+ponc, ponc)
-
 				}
 
 				// ******************** supprimer le surplus d'espace entre les mots ******************************
@@ -180,10 +223,30 @@ func main() {
 				nchaine = strings.ReplaceAll(nchaine, "(low)", "")
 				nchaine = strings.ReplaceAll(nchaine, "(cap)", "")
 
+				// ******************** gerer la ponctuation*********************
+
 			}
-			SORTIE := os.WriteFile(os.Args[2], []byte(Aan(nchaine)), 0777)
+			nchaine = strings.Join(chaine, " ")
+			nchaine = Apost(nchaine)
+			nchaine = Aan(nchaine)
+
+			nchaine = ponc(nchaine)
+
+			ap := regexp.MustCompile(`\.\s+'`)
+			nchaine = ap.ReplaceAllString(nchaine, `.'`)
+			ao := regexp.MustCompile(`\!\s+'`)
+			nchaine = ao.ReplaceAllString(nchaine, `!'`)
+			ak := regexp.MustCompile(`\:\s+'`)
+			nchaine = ak.ReplaceAllString(nchaine, `:'`)
+			ai := regexp.MustCompile(`\;\s+'`)
+			nchaine = ai.ReplaceAllString(nchaine, `;'`)
+			am := regexp.MustCompile(`\,\s+'`)
+			nchaine = am.ReplaceAllString(nchaine, `,'`)
+			ad := regexp.MustCompile(`\?\s+'`)
+			nchaine = ad.ReplaceAllString(nchaine, `?'`)
+			SORTIE := os.WriteFile(os.Args[2], []byte((nchaine)), 0777)
 			if SORTIE != nil {
-				fmt.Println(Aan(nchaine))
+				fmt.Println(Apost(nchaine))
 
 			}
 		}
