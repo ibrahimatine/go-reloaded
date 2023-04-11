@@ -128,7 +128,7 @@ func main() {
 					chaine[i] = strings.Trim(chaine[i], chaine[i])
 				}
 
-				if mot == "(cap," && i != 0 {
+				if mot == "(cap," && i != 0 && i != len(chaine)-1 {
 					nbr := strings.TrimFunc(chaine[i+1], func(r rune) bool {
 						return !unicode.IsDigit(r)
 					})
@@ -158,7 +158,7 @@ func main() {
 					nchaine = strings.Join(chaine, " ")
 				}
 
-				if mot == "(up," && i != 0 {
+				if mot == "(up," && i != 0 && i != len(chaine)-1 {
 					nbr := strings.TrimFunc(chaine[i+1], func(r rune) bool {
 						return !unicode.IsDigit(r)
 					})
@@ -184,7 +184,7 @@ func main() {
 
 					nchaine = strings.Join(chaine, " ")
 				}
-				if mot == "(low," && i != 0 {
+				if mot == "(low," && i != 0 && i != len(chaine)-1 {
 					nbr := strings.TrimFunc(chaine[i+1], func(r rune) bool {
 						return !unicode.IsDigit(r)
 					})
